@@ -1,4 +1,5 @@
 apply plugin: 'java'
+apply plugin: 'com.bmuschko.docker-remote-api'
 
 group = 'com.github.masahitojp'
 archivesBaseName = "botan-example"
@@ -10,6 +11,15 @@ targetCompatibility = 1.8
 def defaultEncoding = 'UTF-8'
 tasks.withType(AbstractCompile)*.options*.encoding = defaultEncoding
 tasks.withType(GroovyCompile)*.groovyOptions*.encoding = defaultEncoding
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.bmuschko:gradle-docker-plugin:2.5.2'
+    }
+}
 
 repositories {
     mavenCentral()
@@ -39,4 +49,30 @@ jar {
         attributes 'Main-Class': 'com.github.masahitojp.botan.SlackBot'
     }
     from configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+}
+
+task copyJar(type: Copy) {
+    dependsOn   'jar'
+    from        "build/libs/${archivesBaseName}-${project.version}.jar"
+    into        'build/docker'
+    rename { String fileName ->
+        fileName.replace("-${project.version}", "")
+    }
+}
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+
+task buildDockerImage(type: DockerBuildImage) {
+    dependsOn   copyJar
+    if (System.env.DOCKER_HOST) {
+        url = "$System.env.DOCKER_HOST".replace("tcp","https")
+        if (System.env.DOCKER_CERT_PATH) {
+            certPath = new File(System.env.DOCKER_CERT_PATH)
+
+        }
+    }
+    else {
+        url = 'unix:///var/run/docker.sock'
+    }
+    tag = "masahitojp/botan-example"
+    inputDir = file('.')
 }
