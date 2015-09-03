@@ -12,13 +12,9 @@ public class PlusPlusMessageListener implements BotanMessageListenerRegister {
                 "\\s*(?<body>.+)\\Q++\\E",
                 "string++",
                 message -> {
-                    try {
                         final String body = message.getMatcher().group("body");
                         final int result = message.getBrain().incr(String.format(KEY_FORMAT, body));
                         message.reply(String.format("%s : total(%d)", body, result));
-                    } catch (BotanException e) {
-                        e.printStackTrace();
-                    }
                 });
     }
 }

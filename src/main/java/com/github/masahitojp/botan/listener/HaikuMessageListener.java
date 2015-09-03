@@ -25,16 +25,12 @@ public class HaikuMessageListener implements BotanMessageListenerRegister {
                 "(?<body>.+)",
                 "koko de ikku",
                 message -> {
-                    try {
                         final Reviewer reviewer = new Reviewer();
                         final Optional<Song> phrases = reviewer.find(message.getBody());
                         if (phrases.isPresent()) {
                             final String result = "ここで一句: " + toSenryuString(phrases);
                             message.reply(result);
                         }
-                    } catch (BotanException e) {
-                        e.printStackTrace();
-                    }
                 });
     }
 

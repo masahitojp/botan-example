@@ -12,19 +12,15 @@ public class NullpoMessageListener implements BotanMessageListenerRegister {
                 "ぬるぽ|ヌルポ|nullpo",
                 "rich: Use rich style ｶﾞｯ",
                 message -> {
-                    try {
-final String ga =
-        "　 Λ＿Λ　　　　＼＼\n" +
-        " （　・∀・）　　　|　|　ｶﾞｯ\n" +
-        "と　　　　）　　　|　|\n" +
-        "　 Ｙ　/ノ　　　 人\n" +
-        "　　 /　）　 　 < 　>_Λ∩\n" +
-        " ＿/し´　／／. Ｖ｀Д´）/\n" +
-        "（＿フ彡　　　　　　 /　>>@%s";
-                        message.reply(String.format(ga, message.getFrom()));
-                    } catch (BotanException e) {
-                        e.printStackTrace();
-                    }
+                    final String ga =
+                            "　 Λ＿Λ　　　　＼＼\n" +
+                            " （　・∀・）　　　|　|　ｶﾞｯ\n" +
+                            "と　　　　）　　　|　|\n" +
+                            "　 Ｙ　/ノ　　　 人\n" +
+                            "　　 /　）　 　 < 　>_Λ∩\n" +
+                            " ＿/し´　／／. Ｖ｀Д´）/\n" +
+                            "（＿フ彡　　　　　　 /　>>@%s";
+                    message.reply(String.format(ga, message.getFrom()));
                 });
     }
 }
