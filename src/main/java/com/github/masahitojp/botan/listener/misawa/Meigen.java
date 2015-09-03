@@ -1,4 +1,4 @@
-package com.github.masahitojp.botan.listener;
+package com.github.masahitojp.botan.listener.misawa;
 
 public class Meigen {
     public Integer id;

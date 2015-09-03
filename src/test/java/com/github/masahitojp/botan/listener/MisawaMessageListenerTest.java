@@ -1,5 +1,6 @@
 package com.github.masahitojp.botan.listener;
 
+import com.github.masahitojp.botan.listener.misawa.Meigen;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;

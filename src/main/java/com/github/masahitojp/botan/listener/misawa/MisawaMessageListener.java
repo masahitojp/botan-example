@@ -1,6 +1,7 @@
-package com.github.masahitojp.botan.listener;
+package com.github.masahitojp.botan.listener.misawa;
 
 import com.github.masahitojp.botan.exception.BotanException;
+import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
 import com.github.masahitojp.botan.utils.BotanUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -47,5 +48,9 @@ public class MisawaMessageListener implements BotanMessageListenerRegister {
                     }
                 }
         );
+        BotanUtils.beforeShutdown(() -> {
+            System.out.println("shutdown");
+            return true;
+        });
     }
 }
