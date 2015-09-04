@@ -1,6 +1,5 @@
 package com.github.masahitojp.botan.listener.misawa;
 
-import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
 import com.github.masahitojp.botan.utils.BotanUtils;
 import com.google.gson.Gson;
@@ -15,6 +14,7 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
+
 
 public class MisawaMessageListener implements BotanMessageListenerRegister {
 

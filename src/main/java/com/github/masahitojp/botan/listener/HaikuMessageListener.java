@@ -1,6 +1,5 @@
 package com.github.masahitojp.botan.listener;
 
-import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.utils.BotanUtils;
 import com.github.masahitojp.nineteen.Reviewer;
 import com.github.masahitojp.nineteen.Song;
