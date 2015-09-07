@@ -37,9 +37,7 @@ public class MisawaMessageListener implements BotanMessageListenerRegister {
                         final Gson gson = new Gson();
                         final Type collectionType = new TypeToken<Collection<Meigen>>(){}.getType();
                         final List<Meigen> rootAsMap =  gson.fromJson(src, collectionType);
-                        final Random r = new Random();
-                        final int i = r.nextInt(rootAsMap.size());
-                        messge.reply(rootAsMap.get(i).image);
+                        messge.reply(BotanUtils.getRandom(rootAsMap).image);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }

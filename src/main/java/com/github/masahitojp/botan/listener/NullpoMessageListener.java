@@ -20,7 +20,7 @@ public class NullpoMessageListener implements BotanMessageListenerRegister {
                             "　　 /　）　 　 < 　>_Λ∩\n" +
                             " ＿/し´　／／. Ｖ｀Д´）/\n" +
                             "（＿フ彡　　　　　　 /　>>@%s";
-                    message.reply(String.format(ga, message.getFrom()));
+                    message.reply(String.format(ga, message.getFromName()));
                 });
     }
 }

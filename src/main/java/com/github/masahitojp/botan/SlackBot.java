@@ -19,7 +19,6 @@ public class SlackBot {
         final String room = envToOpt("SLACK_ROOM");
 
         final Botan botan = new Botan.BotanBuilder(new SlackAdapter(team, user, pswd, room))
-                .setName(user)
                 .build();
 
         try {
