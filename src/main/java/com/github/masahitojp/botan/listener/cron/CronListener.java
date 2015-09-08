@@ -3,29 +3,71 @@ package com.github.masahitojp.botan.listener.cron;
 import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
+import com.google.gson.Gson;
 import it.sauronsoftware.cron4j.Scheduler;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("unused")
 public class CronListener implements BotanMessageListenerRegister {
 
+    public static ConcurrentHashMap<String, CronJob> hashMap = new ConcurrentHashMap<>();
+    public static String dump() {
+        final Gson gson = new Gson();
+        final List<CronJob> jobs = hashMap.values().stream().map(data -> data).collect(Collectors.toList());
+        return gson.toJson(jobs);
+    }
+
     @Override
     public void register(final Robot robot) {
         final String to = "general@conference.cappybara-xmpp.xmpp.slack.com";
-        final String body = "capybara echo 週報 OR 勉強会　開始５分前です";
+        final String body = robot.getName() + " echo 週報 OR 勉強会　開始５分前です";
 
         final Scheduler scheduler = new Scheduler();
         // every minute.
-        scheduler.schedule("* * * * *", () -> {
+        final String id = scheduler.schedule("* * * * *", () -> {
             robot.receive(new BotanMessageSimple(body, to, to, to, -1));
         });
+        hashMap.put(id, new CronJob("* * * * *", to, body));
 
         robot.respond(
                 "job\\s+add\\s+\"(?<schedule>.+)\"\\s+(?<message>.+)$",
                 "",
-                message -> scheduler.schedule("* * * * *", () -> {
-                    message.reply(message.getMatcher().group("message"));
-                })
+                message -> {
+                    final String jobId = scheduler.schedule(message.getMatcher().group("schedule"), () -> {
+                        message.reply(message.getMatcher().group("message"));
+                    });
+                    hashMap.put(jobId, new CronJob(message.getMatcher().group("schedule"), message.getFrom(), message.getMatcher().group("message")));
+                    message.reply(jobId);
+                }
         );
+
+        robot.respond(
+                "jobs ls",
+                "show job list",
+                botanMessage -> {
+                    String str = "";
+                    for (final Map.Entry<String, CronJob> a : hashMap.entrySet()) {
+                        str += String.format("%s: \"%s\" %s\n", a.getKey(), a.getValue().schedule, a.getValue().message);
+                    }
+                    botanMessage.reply(str);
+                }
+        );
+
+        robot.respond(
+                "job rm (?<id>\\.+)",
+                "show job list",
+                botanMessage -> {
+                        final String idStr = botanMessage.getMatcher().group("id");
+                        scheduler.deschedule(idStr);
+                        hashMap.remove(idStr);
+                        botanMessage.reply("job rm successful");
+                }
+        );
+
 
         // start cron4j scheduler.
         scheduler.start();
