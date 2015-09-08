@@ -1,5 +1,6 @@
 package com.github.masahitojp.botan.listener.misawa;
 
+import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
 import com.github.masahitojp.botan.utils.BotanUtils;
 import com.google.gson.Gson;
@@ -19,8 +20,8 @@ import java.util.Random;
 public class MisawaMessageListener implements BotanMessageListenerRegister {
 
     @Override
-    public void register() {
-        BotanUtils.respond(
+    public void register(final Robot robot) {
+        robot.respond(
                 "misawa( +(.*))?",
                 "misawa image",
                 messge -> {
@@ -43,7 +44,7 @@ public class MisawaMessageListener implements BotanMessageListenerRegister {
                     }
                 }
         );
-        BotanUtils.beforeShutdown(() -> {
+        robot.beforeShutdown(() -> {
             System.out.println("shutdown");
             return true;
         });
