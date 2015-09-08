@@ -46,20 +46,21 @@ public class CronListener implements BotanMessageListenerRegister {
         );
 
         robot.respond(
-                "jobs ls",
+                "job\\s+ls$",
                 "show job list",
                 botanMessage -> {
-                    String str = "";
+                    final StringBuilder sb = new StringBuilder();
                     for (final Map.Entry<String, CronJob> a : hashMap.entrySet()) {
-                        str += String.format("%s: \"%s\" %s\n", a.getKey(), a.getValue().schedule, a.getValue().message);
+                        sb.append(String.format("%s: \"%s\" %s\n", a.getKey(), a.getValue().schedule, a.getValue().message));
                     }
-                    botanMessage.reply(str);
+                    final String result = sb.toString();
+                    botanMessage.reply(result);
                 }
         );
 
         robot.respond(
-                "job rm (?<id>\\.+)",
-                "show job list",
+                "job\\s+rm\\s+(?<id>.+)$",
+                "remove job from list",
                 botanMessage -> {
                         final String idStr = botanMessage.getMatcher().group("id");
                         scheduler.deschedule(idStr);
