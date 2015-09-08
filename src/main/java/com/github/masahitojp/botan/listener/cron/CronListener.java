@@ -21,18 +21,22 @@ public class CronListener implements BotanMessageListenerRegister {
         return gson.toJson(jobs);
     }
 
-    @Override
-    public void register(final Robot robot) {
-        final String to = "general@conference.cappybara-xmpp.xmpp.slack.com";
+    private void startUp(final Robot robot, final Scheduler scheduler) {
+        final String to = "general@conference.cappybara.xmpp.slack.com";
         final String body = robot.getName() + " echo 週報 OR 勉強会　開始５分前です";
-
-        final Scheduler scheduler = new Scheduler();
         // every minute.
         final String id = scheduler.schedule("* * * * *", () -> {
-            robot.receive(new BotanMessageSimple(body, to, to, to, -1));
+            robot.send(new BotanMessageSimple(body, to, to, to, -1));
         });
         hashMap.put(id, new CronJob("* * * * *", to, body));
+    }
 
+    @Override
+    public void register(final Robot robot) {
+
+
+        final Scheduler scheduler = new Scheduler();
+        startUp(robot, scheduler);
         robot.respond(
                 "job\\s+add\\s+\"(?<schedule>.+)\"\\s+(?<message>.+)$",
                 "",
@@ -54,7 +58,11 @@ public class CronListener implements BotanMessageListenerRegister {
                         sb.append(String.format("%s: \"%s\" %s\n", a.getKey(), a.getValue().schedule, a.getValue().message));
                     }
                     final String result = sb.toString();
-                    botanMessage.reply(result);
+                    if (result.equals("")) {
+                        botanMessage.reply("job is empty");
+                    } else {
+                        botanMessage.reply(result);
+                    }
                 }
         );
 
@@ -62,13 +70,12 @@ public class CronListener implements BotanMessageListenerRegister {
                 "job\\s+rm\\s+(?<id>.+)$",
                 "remove job from list",
                 botanMessage -> {
-                        final String idStr = botanMessage.getMatcher().group("id");
-                        scheduler.deschedule(idStr);
-                        hashMap.remove(idStr);
-                        botanMessage.reply("job rm successful");
+                    final String idStr = botanMessage.getMatcher().group("id");
+                    scheduler.deschedule(idStr);
+                    hashMap.remove(idStr);
+                    botanMessage.reply("job rm successful");
                 }
         );
-
 
         // start cron4j scheduler.
         scheduler.start();
