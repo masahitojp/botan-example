@@ -1,24 +1,24 @@
 package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.adapter.SlackAdapter;
+import com.github.masahitojp.botan.brain.MapDBBrain;
 import com.github.masahitojp.botan.exception.BotanException;
-
-import java.util.Optional;
+import com.github.masahitojp.botan.utils.BotanUtils;
 
 public class SlackBot {
 
-    static public String envToOpt(final String envName) {
-        Optional<String> javaDirectory = Optional.ofNullable(System.getenv(envName));
-        return javaDirectory.orElse("");
-    }
+
 	static public void main(String[] Args) {
 
-        final String team = envToOpt("SLACK_TEAM");
-        final String user = envToOpt("SLACK_USERNAME");
-        final String pswd = envToOpt("SLACK_PASSWORD");
-        final String room = envToOpt("SLACK_ROOM");
+        final String team = BotanUtils.envToOpt("SLACK_TEAM").orElse("");
+        final String user = BotanUtils.envToOpt("SLACK_USERNAME").orElse("");
+        final String pswd = BotanUtils.envToOpt("SLACK_PASSWORD").orElse("");
+        final String channel = BotanUtils.envToOpt("SLACK_ROOM").orElse("");
+        final String mapDBPath = BotanUtils.envToOpt("MAPDB_PATH").orElse("botanDB");
+        final String mapDBName = BotanUtils.envToOpt("MAPDB_NAME").orElse(team);
 
-        final Botan botan = new Botan.BotanBuilder(new SlackAdapter(team, user, pswd, room))
+        final Botan botan = new Botan.BotanBuilder(new SlackAdapter(team, user, pswd, channel))
+                .setBrain(new MapDBBrain(mapDBPath, mapDBName))
                 .build();
 
         try {

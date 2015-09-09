@@ -1,7 +1,6 @@
 package com.github.masahitojp.botan.listener;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.utils.BotanUtils;
 
 @SuppressWarnings("unused")
 public class PingPongMessageListener implements BotanMessageListenerRegister {
