@@ -6,7 +6,7 @@ import com.github.masahitojp.botan.Robot;
 public class EchoMessageListener implements BotanMessageListenerRegister {
 
     @Override
-    public void register(final Robot robot) {
+    public final void register(final Robot robot) {
         robot.respond(
                 "echo\\s+(?<body>.+)",
                 "echo your message",

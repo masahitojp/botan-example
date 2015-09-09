@@ -1,7 +1,6 @@
 package com.github.masahitojp.botan.listener;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.utils.BotanUtils;
 import com.github.masahitojp.nineteen.Reviewer;
 import com.github.masahitojp.nineteen.Song;
 import com.github.masahitojp.nineteen.Token;

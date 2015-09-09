@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class CronListener implements BotanMessageListenerRegister {
     private static Logger logger = LoggerFactory.getLogger(CronListener.class);
     private static String NAME_SPACE = "cronjob_";
+    private final Object lock = new Object();
 
     private final ConcurrentHashMap<Integer, String> cronIds = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<String, CronJob> runningJobs = new ConcurrentHashMap<>();
@@ -35,7 +36,8 @@ public class CronListener implements BotanMessageListenerRegister {
         final Random random = new Random();
         int id;
         do {
-            id =random.nextInt(10000);
+            int JOB_ID_MAX = 10000;
+            id = random.nextInt(JOB_ID_MAX);
         } while (cronIds.containsKey(id));
         return id;
     }
@@ -44,17 +46,15 @@ public class CronListener implements BotanMessageListenerRegister {
         final Gson gson = new Gson();
         robot.getBrain().search(NAME_SPACE).forEach(entry -> {
             final String json = new String(entry.getValue());
-            final CronJob job = gson.fromJson(json , CronJob.class);
+            final CronJob job = gson.fromJson(json, CronJob.class);
 
             try {
-                // every minute.
                 final String id = scheduler.schedule(job.schedule, () -> {
-                    robot.receive(new BotanMessageSimple(job.message, job.to, job.to, job.to, -1));
+                    robot.send(new BotanMessageSimple(job.message, job.to, job.to, job.to, -1));
                 });
-                int index = entry.getKey().indexOf(NAME_SPACE);
-                int jobId = Integer.parseInt(entry.getKey().substring(index));
+                int jobId = Integer.parseInt(entry.getKey().substring(NAME_SPACE.length()));
                 cronIds.put(jobId, id);
-                runningJobs.put(NAME_SPACE + jobId, job);
+                runningJobs.put(id, job);
             } catch (final InvalidPatternException | NumberFormatException e) {
                 logger.warn("job register failed: {}", e);
             }
@@ -62,7 +62,7 @@ public class CronListener implements BotanMessageListenerRegister {
     }
 
     @Override
-    public void register(final Robot robot) {
+    public final void register(final Robot robot) {
 
         robot.respond(
                 "job\\s+add\\s+\"(?<schedule>.+)\"\\s+(?<message>.+)$",
@@ -76,10 +76,13 @@ public class CronListener implements BotanMessageListenerRegister {
                         final CronJob job =
                                 new CronJob(message.getMatcher().group("schedule"), message.getFrom(), message.getMatcher().group("message"));
                         runningJobs.put(id, job);
-                        int jobId = genereteId();
-                        cronIds.put(jobId, id);
+                        final int jobId;
+                        synchronized (lock) {
+                            jobId = genereteId();
+                            cronIds.put(jobId, id);
+                        }
                         robot.getBrain().put(NAME_SPACE + jobId, gson.toJson(job).getBytes());
-                        message.reply(id);
+                        message.reply(String.format("%d", jobId));
                     } catch (final InvalidPatternException e) {
                         message.reply("job register failed:" + e.getMessage());
                     }
@@ -91,31 +94,47 @@ public class CronListener implements BotanMessageListenerRegister {
                 "show job list",
                 botanMessage -> {
                     final StringBuilder sb = new StringBuilder();
-                    for (final Map.Entry<String, CronJob> a : runningJobs.entrySet()) {
-                        sb.append(String.format("%s: \"%s\" %s\n", a.getKey(), a.getValue().schedule, a.getValue().message));
+                    for (Map.Entry<Integer, String> entry : cronIds.entrySet()) {
+                        final CronJob job = runningJobs.get(entry.getValue());
+                        final int jobId = entry.getKey();
+                        final String schedule = job.schedule;
+                        final String message = job.message;
+                        sb.append(String.format("%d: \"%s\" %s\n", jobId, schedule, message));
                     }
-                    final String result = sb.toString();
+                    String result = sb.toString();
+                    if (result.equals("")) {
+                        result = "no jobs";
+                    }
                     botanMessage.reply(result);
                 }
         );
 
         robot.respond(
-                "job\\s+rm\\s+(?<id>d+)$",
+                "job\\s+rm\\s+(?<id>\\d+)$",
                 "remove job from list",
-                botanMessage -> {
-                    final String idStr = botanMessage.getMatcher().group("id");
-                    final int jobId = Integer.parseInt(idStr);
-                    final String id = cronIds.get(jobId);
-                    scheduler.deschedule(id);
-                    runningJobs.remove(id);
-                    robot.getBrain().delete(NAME_SPACE + id);
-                    botanMessage.reply("job rm successful");
+                message -> {
+                    try {
+                        final String idStr = message.getMatcher().group("id");
+                        final int jobId = Integer.parseInt(idStr);
+                        final String id = cronIds.get(jobId);
+                        if (id == null || id.equals("")) {
+                            message.reply(String.format("job rm failed: id %d not found", jobId));
+                        } else {
+                            scheduler.deschedule(id);
+                            cronIds.remove(jobId);
+                            runningJobs.remove(id);
+                            robot.getBrain().delete(NAME_SPACE + id);
+                            message.reply("job rm successful");
+                        }
+                    } catch (final NumberFormatException e) {
+                        message.reply("job rm failed");
+                    }
                 }
         );
     }
 
     @Override
-    public void beforeShutdown() {
-            scheduler.stop();
+    public final void beforeShutdown() {
+        scheduler.stop();
     }
 }

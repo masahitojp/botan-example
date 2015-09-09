@@ -14,9 +14,8 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 
-
+@SuppressWarnings("unused")
 public class MisawaMessageListener implements BotanMessageListenerRegister {
 
     @Override
@@ -28,17 +27,18 @@ public class MisawaMessageListener implements BotanMessageListenerRegister {
                     final OkHttpClient client = new OkHttpClient();
                     final String url = "http://horesase.github.io/horesase-boys/meigens.json";
                     final Request request = new Request.Builder()
-                                .url(url)
-                                .build();
+                            .url(url)
+                            .build();
 
                     final Response response;
                     try {
                         response = client.newCall(request).execute();
                         final String src = response.body().string();
                         final Gson gson = new Gson();
-                        final Type collectionType = new TypeToken<Collection<Meigen>>(){}.getType();
-                        final List<Meigen> rootAsMap =  gson.fromJson(src, collectionType);
-                        messge.reply(BotanUtils.getRandom(rootAsMap).image);
+                        final Type collectionType = new TypeToken<Collection<Meigen>>() {
+                        }.getType();
+                        final List<Meigen> rootAsMap = gson.fromJson(src, collectionType);
+                        messge.reply(BotanUtils.getRandomValue(rootAsMap).image);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
