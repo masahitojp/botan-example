@@ -44,9 +44,5 @@ public class MisawaMessageListener implements BotanMessageListenerRegister {
                     }
                 }
         );
-        robot.beforeShutdown(() -> {
-            System.out.println("shutdown");
-            return true;
-        });
     }
 }
