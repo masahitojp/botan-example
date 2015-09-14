@@ -3,7 +3,7 @@ package com.github.masahitojp.botan.responder;
 import com.github.masahitojp.botan.Robot;
 
 @SuppressWarnings("unused")
-public class NullpoMessageListener implements BotanMessageResponderRegister {
+public class NullpoMessageResponder implements BotanMessageResponderRegister {
 
     @Override
     public void register(final Robot robot) {

@@ -14,8 +14,8 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
-public class CronListener implements BotanMessageResponderRegister {
-    private static Logger logger = LoggerFactory.getLogger(CronListener.class);
+public class CronMessageResponder implements BotanMessageResponderRegister {
+    private static Logger logger = LoggerFactory.getLogger(CronMessageResponder.class);
     private static String NAME_SPACE = "cronjob_";
     private final Object lock = new Object();
 

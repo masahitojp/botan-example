@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class MisawaMessageListener implements BotanMessageResponderRegister {
+public class MisawaMessageResponder implements BotanMessageResponderRegister {
 
     @Override
     public void register(final Robot robot) {

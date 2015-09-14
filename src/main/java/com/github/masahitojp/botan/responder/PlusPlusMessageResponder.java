@@ -9,7 +9,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public class PlusPlusMessageListener implements BotanMessageResponderRegister {
+public class PlusPlusMessageResponder implements BotanMessageResponderRegister {
     private static String KEY_FORMAT = "plusplus.key.%s";
 
     private final StampedLock lock = new StampedLock();

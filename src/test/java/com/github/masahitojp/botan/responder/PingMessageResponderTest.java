@@ -1,7 +1,7 @@
 package com.github.masahitojp.botan.responder;
 
 import com.github.masahitojp.botan.Botan;
-import com.github.masahitojp.botan.adapters.MockAdapter;
+import com.github.masahitojp.botan.adapter.MockAdapter;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.utils.BotanMessageMock;
@@ -15,7 +15,7 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(JMockit.class)
-public class PingPongMessageListenerTest {
+public class PingMessageResponderTest {
 
     public Botan botan;
 

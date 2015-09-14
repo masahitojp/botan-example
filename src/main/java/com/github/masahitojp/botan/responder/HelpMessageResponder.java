@@ -3,7 +3,7 @@ package com.github.masahitojp.botan.responder;
 import com.github.masahitojp.botan.Robot;
 
 @SuppressWarnings("unused")
-public class HelpMessageListener implements BotanMessageResponderRegister {
+public class HelpMessageResponder implements BotanMessageResponderRegister {
     @Override
     public void register(final Robot robot) {
         robot.respond("help", "show help", message -> {

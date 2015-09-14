@@ -1,7 +1,6 @@
-package com.github.masahitojp.botan.adapters;
+package com.github.masahitojp.botan.adapter;
 
 import com.github.masahitojp.botan.Botan;
-import com.github.masahitojp.botan.adapter.BotanAdapter;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessage;
 

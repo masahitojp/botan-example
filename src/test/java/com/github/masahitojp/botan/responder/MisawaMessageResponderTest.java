@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.is;
 
-public class MisawaMessageListenerTest {
+public class MisawaMessageResponderTest {
     @Test
     public void aaa() {
         final String pt = "\\s*(?<body>.+)\\Q++\\E";

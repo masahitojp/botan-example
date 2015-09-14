@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 
 @SuppressWarnings("unused")
-public class HaikuMessageListener implements BotanMessageResponderRegister {
+public class HaikuMessageResponder implements BotanMessageResponderRegister {
 
     public final String toSenryuString(final Optional<Song> songOpt) {
         return songOpt.map(song -> song.getPhrases().stream()
