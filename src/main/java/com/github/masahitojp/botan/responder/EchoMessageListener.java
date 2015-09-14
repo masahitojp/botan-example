@@ -1,9 +1,9 @@
-package com.github.masahitojp.botan.listener;
+package com.github.masahitojp.botan.responder;
 
 import com.github.masahitojp.botan.Robot;
 
 @SuppressWarnings("unused")
-public class EchoMessageListener implements BotanMessageListenerRegister {
+public class EchoMessageListener implements BotanMessageResponderRegister {
 
     @Override
     public final void register(final Robot robot) {

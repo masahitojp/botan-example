@@ -1,4 +1,4 @@
-package com.github.masahitojp.botan.listener;
+package com.github.masahitojp.botan.responder;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.adapters.MockAdapter;

@@ -1,8 +1,8 @@
-package com.github.masahitojp.botan.listener.cron;
+package com.github.masahitojp.botan.responder.cron;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.listener.BotanMessageListenerRegister;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
+import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
 import com.google.gson.Gson;
 import it.sauronsoftware.cron4j.InvalidPatternException;
 import it.sauronsoftware.cron4j.Scheduler;
@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
-public class CronListener implements BotanMessageListenerRegister {
+public class CronListener implements BotanMessageResponderRegister {
     private static Logger logger = LoggerFactory.getLogger(CronListener.class);
     private static String NAME_SPACE = "cronjob_";
     private final Object lock = new Object();
@@ -44,15 +44,15 @@ public class CronListener implements BotanMessageListenerRegister {
 
     private void remember(final Robot robot) {
         final Gson gson = new Gson();
-        robot.getBrain().search(NAME_SPACE).forEach(entry -> {
-            final String json = new String(entry.getValue());
+        robot.getBrain().keys(NAME_SPACE.getBytes()).forEach(key -> {
+            final String json = new String(robot.getBrain().get(key).orElse(new byte[0]));
             final CronJob job = gson.fromJson(json, CronJob.class);
 
             try {
                 final String id = scheduler.schedule(job.schedule, () -> {
                     robot.send(new BotanMessageSimple(job.message, job.to, job.to, job.to, -1));
                 });
-                int jobId = Integer.parseInt(entry.getKey().substring(NAME_SPACE.length()));
+                int jobId = Integer.parseInt(new String(key).substring(NAME_SPACE.length()));
                 cronIds.put(jobId, id);
                 runningJobs.put(id, job);
             } catch (final InvalidPatternException | NumberFormatException e) {
@@ -81,7 +81,7 @@ public class CronListener implements BotanMessageListenerRegister {
                             jobId = genereteId();
                             cronIds.put(jobId, id);
                         }
-                        robot.getBrain().put(NAME_SPACE + jobId, gson.toJson(job).getBytes());
+                        robot.getBrain().put((NAME_SPACE + jobId).getBytes(), gson.toJson(job).getBytes());
                         message.reply(String.format("%d", jobId));
                     } catch (final InvalidPatternException e) {
                         message.reply("job register failed:" + e.getMessage());
@@ -123,7 +123,7 @@ public class CronListener implements BotanMessageListenerRegister {
                             scheduler.deschedule(id);
                             cronIds.remove(jobId);
                             runningJobs.remove(id);
-                            robot.getBrain().delete(NAME_SPACE + id);
+                            robot.getBrain().delete((NAME_SPACE + id).getBytes());
                             message.reply("job rm successful");
                         }
                     } catch (final NumberFormatException e) {

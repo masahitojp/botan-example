@@ -1,4 +1,4 @@
-package com.github.masahitojp.botan.listener.cron;
+package com.github.masahitojp.botan.responder.cron;
 
 public class CronJob {
 	public String schedule;
