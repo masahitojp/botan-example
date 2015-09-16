@@ -1,9 +1,10 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handlers;
 
 import com.github.masahitojp.botan.Robot;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
 @SuppressWarnings("unused")
-public class NullpoMessageResponder implements BotanMessageResponderRegister {
+public class NullpoMessageResponder implements BotanMessageHandlers {
 
     @Override
     public void register(final Robot robot) {

@@ -1,8 +1,8 @@
-package com.github.masahitojp.botan.responder.cron;
+package com.github.masahitojp.botan.handlers.cron;
 
 import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
-import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.google.gson.Gson;
 import it.sauronsoftware.cron4j.InvalidPatternException;
 import it.sauronsoftware.cron4j.Scheduler;
@@ -14,7 +14,7 @@ import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
-public class CronMessageResponder implements BotanMessageResponderRegister {
+public class CronMessageResponder implements BotanMessageHandlers {
     private static Logger logger = LoggerFactory.getLogger(CronMessageResponder.class);
     private static String NAME_SPACE = "cronjob_";
     private final Object lock = new Object();

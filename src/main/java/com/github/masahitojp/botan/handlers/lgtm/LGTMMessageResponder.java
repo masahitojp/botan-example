@@ -1,7 +1,7 @@
-package com.github.masahitojp.botan.responder.lgtm;
+package com.github.masahitojp.botan.handlers.lgtm;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.squareup.okhttp.OkHttpClient;
@@ -11,7 +11,7 @@ import com.squareup.okhttp.Response;
 import java.io.IOException;
 
 @SuppressWarnings("unused")
-public class LGTMMessageResponder implements BotanMessageResponderRegister {
+public class LGTMMessageResponder implements BotanMessageHandlers {
 
     @Override
     public final void register(final Robot robot) {

@@ -1,6 +1,6 @@
 package com.github.masahitojp.botan;
 
-import com.github.masahitojp.botan.responder.cron.CronJob;
+import com.github.masahitojp.botan.handlers.cron.CronJob;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.junit.Test;

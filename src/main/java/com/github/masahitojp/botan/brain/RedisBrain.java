@@ -11,6 +11,18 @@ public class RedisBrain implements BotanBrain {
     private final int port;
     private JedisPool pool = null;
 
+    public RedisBrain() {
+        this.host = Optional.of(System.getProperty("REDIS_HOST")).orElse("localhost");
+        final String redisPort = Optional.of(System.getProperty("REDIS_PORT")).orElse("6379");
+        int port;
+        try {
+            port = Integer.parseInt(redisPort);
+        } catch (final NumberFormatException ex) {
+            port = 6379;
+        }
+        this.port = port;
+    }
+
     public RedisBrain(String host, int port) {
         this.host = host;
         this.port = port;

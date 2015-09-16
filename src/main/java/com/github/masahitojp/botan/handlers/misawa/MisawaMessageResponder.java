@@ -1,7 +1,7 @@
-package com.github.masahitojp.botan.responder.misawa;
+package com.github.masahitojp.botan.handlers.misawa;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.responder.BotanMessageResponderRegister;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.botan.utils.BotanUtils;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.List;
 
 @SuppressWarnings("unused")
-public class MisawaMessageResponder implements BotanMessageResponderRegister {
+public class MisawaMessageResponder implements BotanMessageHandlers {
 
     @Override
     public void register(final Robot robot) {

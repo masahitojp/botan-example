@@ -1,11 +1,10 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handlers;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.adapter.MockAdapter;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.utils.BotanMessageMock;
-
 import mockit.integration.junit4.JMockit;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,20 +14,20 @@ import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 
 @RunWith(JMockit.class)
-public class PingMessageResponderTest {
+public class EchoMessageHandlersTest {
 
     public Botan botan;
 
     @Before
     public void before() throws BotanException {
-        botan = new Botan.BotanBuilder(new MockAdapter()).build();
+        botan = new Botan.BotanBuilder().setAdapter(new MockAdapter()).build();
         botan.start();
     }
 
     @Test
-    public void pingpong() {
+    public void echo() {
         final BotanMessageMock mock = new BotanMessageMock();
-        botan.receive(new BotanMessageSimple(String.format("%s ping", botan.getName()), null, null, null, 0));
-        assertThat(mock.getResult().toString(), is("pong"));
+        botan.receive(new BotanMessageSimple(String.format("%s echo  週報 OR 勉強会　開始５分前です", botan.getName()), null, null, null, 0));
+        assertThat(mock.getResult().toString(), is("週報 OR 勉強会　開始５分前です"));
     }
 }

@@ -1,6 +1,7 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handlers;
 
 import com.github.masahitojp.botan.Robot;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 import com.github.masahitojp.nineteen.Reviewer;
 import com.github.masahitojp.nineteen.Song;
 import com.github.masahitojp.nineteen.Token;
@@ -10,7 +11,7 @@ import java.util.stream.Collectors;
 
 
 @SuppressWarnings("unused")
-public class HaikuMessageResponder implements BotanMessageResponderRegister {
+public class HaikuMessageResponder implements BotanMessageHandlers {
 
     public final String toSenryuString(final Optional<Song> songOpt) {
         return songOpt.map(song -> song.getPhrases().stream()

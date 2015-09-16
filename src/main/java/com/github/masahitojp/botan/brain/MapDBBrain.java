@@ -16,6 +16,11 @@ public class MapDBBrain implements BotanBrain {
     private DB db;
     private ConcurrentNavigableMap<byte[], byte[]> data;
 
+    public MapDBBrain() {
+        this.path = Optional.of(System.getProperty("MAPDB_PATH")).orElse("./botan_map_db");
+        this.tableName = Optional.of(System.getProperty("MAPDB_TABLE_NAME")).orElse("botan");
+    }
+
     public MapDBBrain(String path, String tableName) {
         this.path = path;
         this.tableName = tableName;

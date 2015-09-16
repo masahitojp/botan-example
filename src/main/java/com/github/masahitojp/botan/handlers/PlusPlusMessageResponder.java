@@ -1,7 +1,8 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handlers;
 
 import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.brain.BotanBrain;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
 import java.nio.ByteBuffer;
 import java.util.Optional;
@@ -9,7 +10,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public class PlusPlusMessageResponder implements BotanMessageResponderRegister {
+public class PlusPlusMessageResponder implements BotanMessageHandlers {
     private static String KEY_FORMAT = "plusplus.key.%s";
 
     private final StampedLock lock = new StampedLock();

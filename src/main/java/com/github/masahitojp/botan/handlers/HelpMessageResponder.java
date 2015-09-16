@@ -1,14 +1,16 @@
-package com.github.masahitojp.botan.responder;
+package com.github.masahitojp.botan.handlers;
 
 import com.github.masahitojp.botan.Robot;
+import com.github.masahitojp.botan.handler.BotanMessageHandler;
+import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
 @SuppressWarnings("unused")
-public class HelpMessageResponder implements BotanMessageResponderRegister {
+public class HelpMessageResponder implements BotanMessageHandlers {
     @Override
     public void register(final Robot robot) {
         robot.respond("help", "show help", message -> {
             final StringBuilder builder = new StringBuilder();
-            for (final BotanMessageResponder listener : robot.getListeners()) {
+            for (final BotanMessageHandler listener : robot.getHandlers()) {
                 final String line = listener.toString();
                 builder.append(line);
             }
