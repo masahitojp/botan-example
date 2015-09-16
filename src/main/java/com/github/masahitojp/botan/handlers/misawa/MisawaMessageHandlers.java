@@ -1,29 +1,33 @@
-package com.github.masahitojp.botan.handlers.lgtm;
+package com.github.masahitojp.botan.handlers.misawa;
 
 import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
+import com.github.masahitojp.botan.utils.BotanUtils;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.List;
+
 @SuppressWarnings("unused")
-public class LGTMMessageResponder implements BotanMessageHandlers {
+public class MisawaMessageHandlers implements BotanMessageHandlers {
 
     @Override
-    public final void register(final Robot robot) {
+    public void register(final Robot robot) {
         robot.respond(
-                "lgtm",
-                "fetching an image from www.lgtm.in.",
-                message -> {
+                "misawa( +(.*))?",
+                "returns JIGOKU-NO-MISAWA image",
+                messge -> {
                     final OkHttpClient client = new OkHttpClient();
-                    final String url = "http://www.lgtm.in/g";
+                    final String url = "http://horesase.github.io/horesase-boys/meigens.json";
                     final Request request = new Request.Builder()
                             .url(url)
-                            .header("Accept", "application/json")
                             .build();
 
                     final Response response;
@@ -31,12 +35,12 @@ public class LGTMMessageResponder implements BotanMessageHandlers {
                         response = client.newCall(request).execute();
                         final String src = response.body().string();
                         final Gson gson = new Gson();
-                        final JsonObject jsonObject = new Gson().fromJson(src, JsonObject.class);
-                        final String imageUrl = jsonObject.get("imageUrl").getAsString();
-                        message.reply(imageUrl);
+                        final Type collectionType = new TypeToken<Collection<Meigen>>() {
+                        }.getType();
+                        final List<Meigen> rootAsMap = gson.fromJson(src, collectionType);
+                        messge.reply(BotanUtils.getRandomValue(rootAsMap).image);
                     } catch (IOException e) {
                         e.printStackTrace();
-                        message.reply(e.getMessage());
                     }
                 }
         );

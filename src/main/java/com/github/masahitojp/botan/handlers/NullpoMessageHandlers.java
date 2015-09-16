@@ -4,7 +4,7 @@ import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
 @SuppressWarnings("unused")
-public class NullpoMessageResponder implements BotanMessageHandlers {
+public class NullpoMessageHandlers implements BotanMessageHandlers {
 
     @Override
     public void register(final Robot robot) {

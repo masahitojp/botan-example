@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 
 @SuppressWarnings("unused")
-public class HaikuMessageResponder implements BotanMessageHandlers {
+public class HaikuMessageHandlers implements BotanMessageHandlers {
 
     public final String toSenryuString(final Optional<Song> songOpt) {
         return songOpt.map(song -> song.getPhrases().stream()

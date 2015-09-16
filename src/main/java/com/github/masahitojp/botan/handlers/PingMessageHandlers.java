@@ -4,7 +4,7 @@ import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
 @SuppressWarnings("unused")
-public class PingMessageResponder implements BotanMessageHandlers {
+public class PingMessageHandlers implements BotanMessageHandlers {
 
     @Override
     public void register(final Robot robot) {

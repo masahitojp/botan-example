@@ -10,7 +10,7 @@ import java.util.concurrent.locks.StampedLock;
 import java.util.function.Function;
 
 @SuppressWarnings("unused")
-public class PlusPlusMessageResponder implements BotanMessageHandlers {
+public class PlusPlusMessageHandlers implements BotanMessageHandlers {
     private static String KEY_FORMAT = "plusplus.key.%s";
 
     private final StampedLock lock = new StampedLock();

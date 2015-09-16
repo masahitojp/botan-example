@@ -4,7 +4,7 @@ import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
 @SuppressWarnings("unused")
-public class EchoMessageResponder implements BotanMessageHandlers {
+public class EchoMessageHandlers implements BotanMessageHandlers {
 
     @Override
     public final void register(final Robot robot) {
