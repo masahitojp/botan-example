@@ -2,32 +2,69 @@ package com.github.masahitojp.botan.handlers;
 
 import com.github.masahitojp.botan.Botan;
 import com.github.masahitojp.botan.adapter.MockAdapter;
-import com.github.masahitojp.botan.exception.BotanException;
+import com.github.masahitojp.botan.brain.LocalBrain;
+import com.github.masahitojp.botan.message.BotanMessage;
 import com.github.masahitojp.botan.message.BotanMessageSimple;
-import com.github.masahitojp.botan.utils.BotanMessageMock;
-import mockit.integration.junit4.JMockit;
+
+import mockit.Mock;
+import mockit.MockUp;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
-@RunWith(JMockit.class)
+import static org.hamcrest.Matchers.*;
+import static org.hamcrest.MatcherAssert.*;
+
 public class EchoMessageHandlersTest {
-
-    public Botan botan;
-
+    Botan botan;
     @Before
-    public void before() throws BotanException {
-        botan = new Botan.BotanBuilder().setAdapter(new MockAdapter()).build();
-        botan.start();
+    public void startUp() {
+        botan = new Botan.BotanBuilder()
+                .setAdapter(new MockAdapter())
+                .setBrain(new LocalBrain())
+                .setMessageHandlers(new EchoMessageHandlers())
+                .build();
+    }
+
+    @After
+    public void tearDown() {
+        botan.stop();
     }
 
     @Test
-    public void echo() {
-        final BotanMessageMock mock = new BotanMessageMock();
-        botan.receive(new BotanMessageSimple(String.format("%s echo  週報 OR 勉強会　開始５分前です", botan.getName()), null, null, null, 0));
-        assertThat(mock.getResult().toString(), is("週報 OR 勉強会　開始５分前です"));
+    public void handlersRegistrationTest() {
+        assertThat(botan.getHandlers().size(), is(1));
+    }
+    @Test
+    public void regexTest() {
+        final AtomicInteger times = new AtomicInteger();
+        MockUp<Consumer<BotanMessage>> spy = new MockUp<Consumer<BotanMessage>>(){
+            @Mock
+            public void accept(BotanMessage message) {
+                times.incrementAndGet();
+            }
+        };
+        botan.getHandlers()
+                .stream()
+                .filter(handler -> handler.getDescription().equals("echo your message"))
+                .forEach(handler -> handler.setHandle(spy.getMockInstance()));
+        botan.receive(new BotanMessageSimple("botan echo aaa"));
+        assertThat(times.get(), is(1));
+    }
+    @Test
+    public void MessageReplyTest() {
+        final AtomicReference<String> replayMessage = new AtomicReference<>();
+        new MockUp<BotanMessage>(){
+            @Mock
+            public void reply(String message) {
+                replayMessage.set(message);
+            }
+        };
+        botan.receive(new BotanMessageSimple("botan echo aaa"));
+        assertThat(replayMessage.get(), is("aaa"));
     }
 }

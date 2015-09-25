@@ -23,6 +23,10 @@ public class CronMessageHandlers implements BotanMessageHandlers {
     private final ConcurrentHashMap<String, CronJob> runningJobs = new ConcurrentHashMap<>();
     private Scheduler scheduler;
 
+    public static String JOB_ADD_DESCRIPTION = "add job";
+    public static String JOB_LIST_DESCRIPTION = "show job list";
+    public static String JOB_RM_DESCRIPTION = "remove job from list";
+
     @Override
     public final void initialize(final Robot robot) {
         scheduler = new Scheduler();
@@ -66,7 +70,7 @@ public class CronMessageHandlers implements BotanMessageHandlers {
 
         robot.respond(
                 "job\\s+add\\s+\"(?<schedule>.+)\"\\s+(?<message>.+)$",
-                "add job",
+                JOB_ADD_DESCRIPTION,
                 message -> {
                     try {
                         final Gson gson = new Gson();
@@ -91,7 +95,7 @@ public class CronMessageHandlers implements BotanMessageHandlers {
 
         robot.respond(
                 "job\\s+ls$",
-                "show job list",
+                JOB_LIST_DESCRIPTION,
                 botanMessage -> {
                     final StringBuilder sb = new StringBuilder();
                     for (Map.Entry<Integer, String> entry : cronIds.entrySet()) {
@@ -111,7 +115,7 @@ public class CronMessageHandlers implements BotanMessageHandlers {
 
         robot.respond(
                 "job\\s+rm\\s+(?<id>\\d+)$",
-                "remove job from list",
+                JOB_RM_DESCRIPTION,
                 message -> {
                     try {
                         final String idStr = message.getMatcher().group("id");
