@@ -1,0 +1,6 @@
+#!/bin/bash
+
+curl http://$OPENSHIFT_APP_DNS -o /dev/null -s
+if [ $? -ne 0 ]; then
+    curl http://$OPENSHIFT_APP_DNS -o /dev/null
+fi

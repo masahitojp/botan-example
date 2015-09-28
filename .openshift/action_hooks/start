@@ -1,0 +1,14 @@
+#!/bin/bash
+# The logic to start up your application should be put in this
+# script. The application will work only if it binds to
+# $OPENSHIFT_DIY_IP:8080
+#nohup $OPENSHIFT_REPO_DIR/diy/testrubyserver.rb $OPENSHIFT_DIY_IP $OPENSHIFT_REPO_DIR/diy |& /usr/bin/logshifter -tag diy &
+ 
+set -x
+
+export GRADLE_USER_HOME=$OPENSHIFT_DATA_DIR/gradle
+export JAVA_HOME=$OPENSHIFT_DATA_DIR/jdk1.8.0_20
+export PATH=$JAVA_HOME/bin:$PATH
+ 
+cd $OPENSHIFT_REPO_DIR
+java -jar build/libs/botan-example-0.0.0.1.jar &
