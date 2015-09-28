@@ -1,8 +1,7 @@
 package com.github.masahitojp.botan;
 
 import com.github.masahitojp.botan.adapter.SlackAdapter;
-import com.github.masahitojp.botan.brain.MapDBBrain;
-import com.github.masahitojp.botan.brain.RedisBrain;
+import com.github.masahitojp.botan.brain.mapdb.MapDBBrain;
 import com.github.masahitojp.botan.exception.BotanException;
 import com.github.masahitojp.botan.utils.BotanUtils;
 

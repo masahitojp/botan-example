@@ -1,5 +1,6 @@
-package com.github.masahitojp.botan.brain;
+package com.github.masahitojp.botan.brain.redis;
 
+import com.github.masahitojp.botan.brain.BotanBrain;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 

@@ -1,21 +1,23 @@
-package com.github.masahitojp.botan.brain;
+package com.github.masahitojp.botan.brain.mapdb;
 
+import com.github.masahitojp.botan.brain.BotanBrain;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 
-import java.io.File;
+import java.io.*;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
-import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
 public class MapDBBrain implements BotanBrain {
     private final String path;
     private final String tableName;
     private DB db;
-    private ConcurrentNavigableMap<byte[], byte[]> data;
+    private ConcurrentMap<ByteArrayWrapper, byte[]> data;
 
+    @SuppressWarnings("unused")
     public MapDBBrain() {
         this.path = Optional.of(System.getProperty("MAPDB_PATH")).orElse("./botan_map_db");
         this.tableName = Optional.of(System.getProperty("MAPDB_TABLE_NAME")).orElse("botan");
@@ -27,13 +29,13 @@ public class MapDBBrain implements BotanBrain {
     }
 
     @Override
-    public final Optional<byte[]> get(final byte[]key ) {
-        return Optional.ofNullable(data.get(key));
+    public final Optional<byte[]> get(final byte[] key) {
+        return Optional.ofNullable(data.get(new ByteArrayWrapper(key)));
     }
 
     @Override
     public final Optional<byte[]> put(byte[] key, byte[] value) {
-        final Optional<byte[]> result = Optional.ofNullable(data.put(key, value));
+        final Optional<byte[]> result = Optional.ofNullable(data.put(new ByteArrayWrapper(key), value));
         db.commit();
         return result;
     }
@@ -50,17 +52,18 @@ public class MapDBBrain implements BotanBrain {
     public Set<byte[]> keys(byte[] startsWith) {
         return this.data.keySet()
                 .stream()
-                .filter(key -> Arrays.asList(key).indexOf(startsWith) == 0)
+                .filter(key -> Arrays.asList(key.getData()).indexOf(startsWith) == 0)
+                .map(ByteArrayWrapper::getData)
                 .collect(Collectors.toSet());
     }
 
     @Override
     public void initialize() {
-        db = DBMaker.fileDB(new File(path))
+        db = DBMaker.newFileDB(new File(path))
                 .transactionDisable()
                 .closeOnJvmShutdown()
                 .make();
-        data = db.treeMap(tableName);
+        data = db.getHashMap(tableName);
     }
 
     @Override

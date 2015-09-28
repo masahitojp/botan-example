@@ -39,7 +39,7 @@ dependencies {
     compile 'it.sauronsoftware.cron4j:cron4j:2.2.5'
     compile 'com.squareup.okhttp:okhttp:2.5.0'
     compile 'com.google.code.gson:gson:2.3.1'
-    compile 'org.mapdb:mapdb:2.0-beta6'
+    compile 'org.mapdb:mapdb:1.0.8'
     compile 'redis.clients:jedis:2.7.3'
     compile 'org.slf4j:slf4j-api:1.7.12'
     compile 'ch.qos.logback:logback-classic:1.1.3'
