@@ -1,31 +1,28 @@
 package com.github.masahitojp.botan.handlers.cron;
 
 import com.github.masahitojp.botan.Robot;
-import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
+import com.github.masahitojp.botan.message.BotanMessageSimple;
 import com.google.gson.Gson;
 import it.sauronsoftware.cron4j.InvalidPatternException;
 import it.sauronsoftware.cron4j.Scheduler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("unused")
 public class CronMessageHandlers implements BotanMessageHandlers {
-    private static Logger logger = LoggerFactory.getLogger(CronMessageHandlers.class);
-    private static String NAME_SPACE = "cronjob_";
-    private final Object lock = new Object();
-
-    private final ConcurrentHashMap<Integer, String> cronIds = new ConcurrentHashMap<>();
-    private final ConcurrentHashMap<String, CronJob> runningJobs = new ConcurrentHashMap<>();
-    private Scheduler scheduler;
-
     public static String JOB_ADD_DESCRIPTION = "add job";
     public static String JOB_LIST_DESCRIPTION = "show job list";
     public static String JOB_RM_DESCRIPTION = "remove job from list";
+    private static Logger logger = LoggerFactory.getLogger(CronMessageHandlers.class);
+    private static String NAME_SPACE = "cronjob_";
+    private final Object lock = new Object();
+    private final ConcurrentHashMap<Integer, String> cronIds = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, CronJob> runningJobs = new ConcurrentHashMap<>();
+    private Scheduler scheduler;
 
     @Override
     public final void initialize(final Robot robot) {
@@ -48,21 +45,25 @@ public class CronMessageHandlers implements BotanMessageHandlers {
 
     private void remember(final Robot robot) {
         final Gson gson = new Gson();
-        robot.getBrain().keys(NAME_SPACE.getBytes()).forEach(key -> {
-            final String json = new String(robot.getBrain().get(key).orElse(new byte[0]));
-            final CronJob job = gson.fromJson(json, CronJob.class);
+        robot.getBrain().getData().forEach((k, v) -> {
+            if (k.startsWith(NAME_SPACE)) {
 
-            try {
-                final String id = scheduler.schedule(job.schedule, () -> {
-                    robot.send(new BotanMessageSimple(job.message, job.to, job.to, job.to, -1));
-                });
-                int jobId = Integer.parseInt(new String(key).substring(NAME_SPACE.length()));
-                cronIds.put(jobId, id);
-                runningJobs.put(id, job);
-            } catch (final InvalidPatternException | NumberFormatException e) {
-                logger.warn("job register failed: {}", e);
+                final String json = robot.getBrain().getData().getOrDefault(k, "");
+                final CronJob job = gson.fromJson(json, CronJob.class);
+
+                try {
+                    final String id = scheduler.schedule(job.schedule, () -> {
+                        robot.send(new BotanMessageSimple(job.message, job.to, job.to, job.to, -1));
+                    });
+                    final int jobId = Integer.parseInt(k.substring(NAME_SPACE.length()));
+                    cronIds.put(jobId, id);
+                    runningJobs.put(id, job);
+                } catch (final InvalidPatternException | NumberFormatException e) {
+                    logger.warn("job register failed: {}", e);
+                }
             }
         });
+
     }
 
     @Override
@@ -85,8 +86,8 @@ public class CronMessageHandlers implements BotanMessageHandlers {
                             jobId = genereteId();
                             cronIds.put(jobId, id);
                         }
-                        robot.getBrain().put((NAME_SPACE + jobId).getBytes(), gson.toJson(job).getBytes());
-                        message.reply(String.format("%d", jobId));
+                        robot.getBrain().getData().put(NAME_SPACE + jobId, gson.toJson(job));
+                        message.reply(String.valueOf(jobId));
                     } catch (final InvalidPatternException e) {
                         message.reply("job register failed:" + e.getMessage());
                     }
@@ -98,13 +99,10 @@ public class CronMessageHandlers implements BotanMessageHandlers {
                 JOB_LIST_DESCRIPTION,
                 botanMessage -> {
                     final StringBuilder sb = new StringBuilder();
-                    for (Map.Entry<Integer, String> entry : cronIds.entrySet()) {
-                        final CronJob job = runningJobs.get(entry.getValue());
-                        final int jobId = entry.getKey();
-                        final String schedule = job.schedule;
-                        final String message = job.message;
-                        sb.append(String.format("%d: \"%s\" %s\n", jobId, schedule, message));
-                    }
+                    cronIds.forEach((jobId,v) -> {
+                        final CronJob job = runningJobs.get(v);
+                        sb.append(String.format("%d: \"%s\" %s\n", jobId, job.schedule, job.message));
+                    });
                     String result = sb.toString();
                     if (result.equals("")) {
                         result = "no jobs";
@@ -127,7 +125,7 @@ public class CronMessageHandlers implements BotanMessageHandlers {
                             scheduler.deschedule(id);
                             cronIds.remove(jobId);
                             runningJobs.remove(id);
-                            robot.getBrain().delete((NAME_SPACE + id).getBytes());
+                            robot.getBrain().getData().remove(NAME_SPACE + id);
                             message.reply("job rm successful");
                         }
                     } catch (final NumberFormatException e) {
