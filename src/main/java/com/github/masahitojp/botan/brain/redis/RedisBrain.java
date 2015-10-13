@@ -1,12 +1,12 @@
 package com.github.masahitojp.botan.brain.redis;
 
 import com.github.masahitojp.botan.brain.BotanBrain;
+import com.github.masahitojp.botan.utils.BotanUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -20,8 +20,8 @@ public class RedisBrain implements BotanBrain {
     private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public RedisBrain() {
-        final String host = Optional.of(System.getProperty("REDIS_HOST")).orElse("localhost");
-        final String redisPort = Optional.of(System.getProperty("REDIS_PORT")).orElse("6379");
+        final String host = BotanUtils.envToOpt("REDIS_HOST").orElse("localhost");
+        final String redisPort = BotanUtils.envToOpt("REDIS_PORT").orElse("6379");
         int port;
         try {
             port = Integer.parseInt(redisPort);
