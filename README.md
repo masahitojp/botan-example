@@ -19,7 +19,7 @@ $ ./gradlew buildDockerImage
 ~~~
 
 ~~~sh
-$ docker run -i -t -d -e SLACK_TEAM=team -e SLACK_USERNAME=user -e SLACK_PASSWORD=password -e SLACK_ROOM=room masahitojp/botan-example:latest 
+$ docker run -i -t -d -e SLACK_TEAM=team -e SLACK_API_TOKEN=token masahitojp/botan-example:latest 
 ~~~
 
 
@@ -27,10 +27,7 @@ $ docker run -i -t -d -e SLACK_TEAM=team -e SLACK_USERNAME=user -e SLACK_PASSWOR
 
 |Environment variable|description|
 |--------------|---------|
-|SLACK_TEAM    |slack team name|
-|SLACK_USERNAME|user name      |
-|SLACK_PASSWORD|password       |
-|SLACK_ROOM| room name (general etc)|
+|SLACK_API_TOKEN   |Account's token. get one on https://api.slack.com/web#basics|
 
 # license
 
