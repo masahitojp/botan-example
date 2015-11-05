@@ -79,7 +79,7 @@ public class CronMessageHandlers implements BotanMessageHandlers {
                             message.reply(message.getMatcher().group("message"));
                         });
                         final CronJob job =
-                                new CronJob(message.getMatcher().group("schedule"), message.getFrom(), message.getMatcher().group("message"));
+                                new CronJob(message.getMatcher().group("schedule"), message.getTo(), message.getMatcher().group("message"));
                         runningJobs.put(id, job);
                         final int jobId;
                         synchronized (lock) {
@@ -125,7 +125,7 @@ public class CronMessageHandlers implements BotanMessageHandlers {
                             scheduler.deschedule(id);
                             cronIds.remove(jobId);
                             runningJobs.remove(id);
-                            robot.getBrain().getData().remove(NAME_SPACE + id);
+                            robot.getBrain().getData().remove(NAME_SPACE + idStr);
                             message.reply("job rm successful");
                         }
                     } catch (final NumberFormatException e) {
