@@ -4,17 +4,17 @@ import com.github.masahitojp.botan.Robot;
 import com.github.masahitojp.botan.handler.BotanMessageHandler;
 import com.github.masahitojp.botan.handler.BotanMessageHandlers;
 
+import java.util.stream.Collectors;
+
 @SuppressWarnings("unused")
 public class HelpMessageHandlers implements BotanMessageHandlers {
     @Override
     public void register(final Robot robot) {
-        robot.respond("help", "show help", message -> {
-            final StringBuilder builder = new StringBuilder();
-            for (final BotanMessageHandler listener : robot.getHandlers()) {
-                final String line = listener.toString();
-                builder.append(line);
-            }
-            message.reply(builder.toString());
-        });
+        robot.respond("help\\z", "Displays all of the commands.",
+                message -> message.reply(
+                        robot.getHandlers().stream().sorted().map(BotanMessageHandler::toString)
+                                .filter(str -> !str.equals(""))
+                                .collect(Collectors.joining("\n")))
+        );
     }
 }

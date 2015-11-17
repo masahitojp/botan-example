@@ -6,7 +6,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -16,28 +18,36 @@ public class RedisBrain implements BotanBrain {
     private static Logger log = LoggerFactory.getLogger(RedisBrain.class);
     private static String KEY = "botan:brain";
     private ConcurrentHashMap<String, String> data;
+    private ConcurrentHashMap<String, String> old;
     private JedisPool pool;
     private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public RedisBrain() {
         final String host = BotanUtils.envToOpt("REDIS_HOST").orElse("localhost");
         final String redisPort = BotanUtils.envToOpt("REDIS_PORT").orElse("6379");
+        final String redisPassword = BotanUtils.envToOpt("REDIS_PASSWORD").orElse("");
+        final int timeout = 2000;
         int port;
         try {
             port = Integer.parseInt(redisPort);
         } catch (final NumberFormatException ex) {
             port = 6379;
         }
-        startUP(host, port);
+        startUP(host, port, timeout, redisPassword);
     }
 
-    public RedisBrain(String host, int port) {
-        startUP(host, port);
+    public RedisBrain(String host, int port, String password) {
+        startUP(host, port, 2000, password);
     }
 
-    private void startUP(String host, int port) {
+    private void startUP(String host, int port, int timeout, String password) {
         this.data = new ConcurrentHashMap<>();
-        this.pool = new JedisPool(host, port);
+        if (password!= null && !password.equals("")) {
+            final JedisPoolConfig poolConfig = new JedisPoolConfig();
+            this.pool = new JedisPool(poolConfig, host, port, timeout, password);
+        } else {
+            this.pool = new JedisPool(host, port);
+        }
     }
 
     @Override
@@ -54,14 +64,18 @@ public class RedisBrain implements BotanBrain {
         } catch (final Exception e) {
             log.warn("{}", e);
         }
+        old = data;
 
         service.scheduleWithFixedDelay(() -> {
-            try (final Jedis jedis = pool.getResource()) {
-                data.forEach((k, v) -> jedis.hset(KEY, k, v));
-            } catch (final Exception e) {
-                log.warn("{}", e);
+            if(!equalMaps(old, data)) {
+                try (final Jedis jedis = pool.getResource()) {
+                    data.forEach((k, v) -> jedis.hset(KEY, k, v));
+                } catch (final Exception e) {
+                    log.warn("{}", e);
+                }
+                old = data;
             }
-        }, 30, 5, TimeUnit.SECONDS);
+        }, 5, 5, TimeUnit.SECONDS);
     }
 
     @Override
@@ -71,5 +85,14 @@ public class RedisBrain implements BotanBrain {
             pool.destroy();
         }
         service.shutdown();
+    }
+
+    private <K,V> boolean equalMaps(Map<K,V> m1, Map<K,V> m2) {
+        if (m1.equals(m2)) return true;
+        if (m1.size() != m2.size()) return false;
+        for (final K key: m1.keySet())
+            if (!m1.get(key).equals(m2.get(key)))
+                return false;
+        return true;
     }
 }
