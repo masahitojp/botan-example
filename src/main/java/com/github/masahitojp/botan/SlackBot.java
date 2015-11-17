@@ -22,8 +22,6 @@ public class SlackBot {
             botan.start();
         } catch (final BotanException | IOException ex) {
             ex.printStackTrace();
-        } finally {
-            if(botan != null)botan.stop();
         }
 
     }

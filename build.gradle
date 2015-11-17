@@ -29,8 +29,8 @@ repositories {
 }
 
 dependencies {
-    compile 'com.github.masahitojp:nineteen:0.0.4'
-    compile 'com.github.masahitojp:botan-core:0.3.1.0'
+    compile 'com.github.masahitojp:nineteen:0.0.5'
+    compile 'com.github.masahitojp:botan-core:0.3.2.0'
     compile 'com.github.masahitojp:botan-mapdb:0.2.1.1'
     compile 'it.sauronsoftware.cron4j:cron4j:2.2.5'
     compile 'com.google.code.gson:gson:2.3.1'
