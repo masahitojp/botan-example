@@ -11,7 +11,7 @@ public class SlackBot {
     static public void main(String[] Args) {
 
         final String apiToken = BotanUtils.envToOpt("SLACK_API_TOKEN").orElse("");
-        Botan botan = null;
+        Botan botan;
 
         try {
             botan = new Botan.BotanBuilder()
