@@ -2,12 +2,10 @@ package com.github.masahitojp.botan.handlers.keepalive;
 
 import fi.iki.elonen.NanoHTTPD;
 
-import static fi.iki.elonen.NanoHTTPD.Method.GET;
-
 public class App extends NanoHTTPD {
 
-    public App(int port) {
-        super(port);
+    public App(final String ipAddress, final int port) {
+        super(ipAddress, port);
     }
 
     @Override

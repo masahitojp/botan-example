@@ -17,8 +17,10 @@ public class KeepAliveHandlers implements BotanMessageHandlers {
     @Override
     public final void initialize(final Robot robot) {
         try {
+            // IP設定
+            final String ipAddress = Optional.ofNullable(System.getenv("IP_ADDRESS")).orElse("0.0.0.0");
             final int port = Integer.parseInt(Optional.ofNullable(System.getenv("PORT")).orElse("5353"));
-            app = new App(port);
+            app = new App(ipAddress, port);
             app.start();
         } catch (IOException e) {
             logger.warn("", e);
