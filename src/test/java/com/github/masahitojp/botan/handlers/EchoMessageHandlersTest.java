@@ -27,7 +27,7 @@ public class EchoMessageHandlersTest {
         botan = new Botan.BotanBuilder()
                 .setAdapter(new MockAdapter())
                 .setBrain(new LocalBrain())
-                .setMessageHandlers(new EchoMessageHandlers())
+                .setMessageHandlers(new DiagnosticsHandlers())
                 .build();
         botan.start();
     }
@@ -39,7 +39,7 @@ public class EchoMessageHandlersTest {
 
     @Test
     public void handlersRegistrationTest() {
-        assertThat(botan.getHandlers().size(), is(1));
+        assertThat(botan.getHandlers().size(), is(3));
     }
     @Test
     public void regexTest() {

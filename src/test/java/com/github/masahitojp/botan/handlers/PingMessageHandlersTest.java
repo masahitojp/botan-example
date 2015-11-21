@@ -29,7 +29,7 @@ public class PingMessageHandlersTest {
         botan = new Botan.BotanBuilder()
                 .setAdapter(new MockAdapter())
                 .setBrain(new LocalBrain())
-                .setMessageHandlers(new PingMessageHandlers())
+                .setMessageHandlers(new DiagnosticsHandlers())
                 .build();
         botan.start();
     }
@@ -41,11 +41,11 @@ public class PingMessageHandlersTest {
 
     @Test
     public void handlersRegistrationTest() {
-        assertThat(botan.getHandlers().size(), is(1));
+        assertThat(botan.getHandlers().size(), is(3));
     }
     @Test
     public void regexTest() {
-        Collections.singletonList(new RegexTestPattern(PingMessageHandlers.DESCRIPTION, "botan ping", 1))
+        Collections.singletonList(new RegexTestPattern("Reply with pong", "botan ping", 1))
                 .stream()
                 .forEach(pattern -> {
                     final AtomicInteger times = new AtomicInteger();
