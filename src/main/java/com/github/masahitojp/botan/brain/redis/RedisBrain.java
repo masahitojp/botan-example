@@ -23,7 +23,7 @@ public class RedisBrain implements BotanBrain {
     private final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
 
     public RedisBrain() {
-        final String host = BotanUtils.envToOpt("REDIS_HOST").orElse("localhost");
+        final String host = BotanUtils.envToOpt("REDIS_HOSTNAME").orElse("localhost");
         final String redisPort = BotanUtils.envToOpt("REDIS_PORT").orElse("6379");
         final String redisPassword = BotanUtils.envToOpt("REDIS_PASSWORD").orElse("");
         final int timeout = 2000;
