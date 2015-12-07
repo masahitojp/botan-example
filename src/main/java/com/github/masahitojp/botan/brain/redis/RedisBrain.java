@@ -36,6 +36,7 @@ public class RedisBrain implements BotanBrain {
         startUP(host, port, timeout, redisPassword);
     }
 
+    @SuppressWarnings("unused")
     public RedisBrain(String host, int port, String password) {
         startUP(host, port, 2000, password);
     }
@@ -64,7 +65,7 @@ public class RedisBrain implements BotanBrain {
         } catch (final Exception e) {
             log.warn("{}", e);
         }
-        old = data;
+        old = new ConcurrentHashMap<>(data);
 
         service.scheduleWithFixedDelay(() -> {
             if(!equalMaps(old, data)) {
@@ -73,7 +74,7 @@ public class RedisBrain implements BotanBrain {
                 } catch (final Exception e) {
                     log.warn("{}", e);
                 }
-                old = data;
+                old = new ConcurrentHashMap<>(data);
             }
         }, 5, 5, TimeUnit.SECONDS);
     }
