@@ -1,6 +1,6 @@
 # botan-example
 
-Examples of chat bot using the botan(https://github.com/masahitojp/botan)
+Examples of chat bot using the botan(https://github.com/masahitojp/botan-core)
 
 # requirement
 
