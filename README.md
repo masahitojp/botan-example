@@ -5,7 +5,6 @@ Examples of chat bot using the botan(https://github.com/masahitojp/botan)
 # requirement
 
 * Java8
-* OpenShift Account(Optional!)
 
 ## build jar
 
